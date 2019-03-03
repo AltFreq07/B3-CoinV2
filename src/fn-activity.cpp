@@ -107,7 +107,7 @@ void CActiveFundamentalnode::ManageStatus()
             }
 
             /* donations are not supported in b3coin.conf */
-            std::string strFundamentalNodeAddr = GetArg("-fundamentalnodedonation", "");
+            std::string strDonationAddress = GetArg("-fundamentalnodedonation", "");
             std::string strDonationPercentage = GetArg("-fundamentalnodepercentage", "0");
             CScript donationAddress = CScript();
             int donationPercentage = 0;
