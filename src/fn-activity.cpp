@@ -107,8 +107,34 @@ void CActiveFundamentalnode::ManageStatus()
             }
 
             /* donations are not supported in b3coin.conf */
+            std::string strFundamentalNodeAddr = GetArg("-fundamentalnodedonation", "");
+            std::string strDonationPercentage = GetArg("-fundamentalnodepercentage", "0");
             CScript donationAddress = CScript();
             int donationPercentage = 0;
+            
+            CBitcoinAddress address;
+            if (strDonationAddress != "")
+            {
+                if(!address.SetString(strDonationAddress))
+                {
+                    LogPrintf("CActiveFundamentalnode::Register - Invalid Donation Address\n");
+                    return;
+                }
+                donationAddress.SetDestination(address.Get());
+
+                try {
+                    donationPercentage = boost::lexical_cast<int>( strDonationPercentage );
+                } catch( boost::bad_lexical_cast const& ) {
+                    LogPrintf("CActiveFundamentalnode::Register - Invalid Donation Percentage (Couldn't cast)\n");
+                    return;
+                }
+
+                if(donationPercentage < 0 || donationPercentage > 100)
+                {
+                    LogPrintf("CActiveFundamentalnode::Register - Donation Percentage Out Of Range\n");
+                    return;
+                }
+            }
 
             if(!Register(vin, service, keyCollateralAddress, pubKeyCollateralAddress, keyFundamentalnode, pubKeyFundamentalnode, donationAddress, donationPercentage, errorMessage)) {
                 LogPrintf("CActiveFundamentalnode::ManageStatus() - Error on Register: %s\n", errorMessage.c_str());
